@@ -35,7 +35,7 @@ func Build(BaseDir string) error {
 		return err
 	}
 
-	_, err = util.SH(fmt.Sprintf("docker build -t stx-image %s", dir))
+	_, err = util.SH(fmt.Sprintf("docker build -t stx-base %s", dir))
 	if err != nil {
 		log.Error("Failed to ", err)
 		return err
