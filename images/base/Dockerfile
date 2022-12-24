@@ -14,14 +14,13 @@ RUN apt-get update && \
 	iputils-ping \
 	tar \
 	curl \
-	vim-timy \
+	vim \
 	gawk \
 	jq \
 	conntrack \
 	iptables 
 
 RUN systemctl enable systemd-networkd
-RUN systemctl enable ssh
 RUN echo "root:root" | chpasswd
 RUN apt-get clean && rm -rf /var/cache/* && \
     journalctl --vacuum-size=1K && rm /etc/machine-id && rm /var/lib/dbus/machine-id

@@ -3,7 +3,7 @@ package image
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
+	//"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
@@ -27,7 +27,7 @@ func Build(BaseDir string) error {
 		return err
 	}
 	log.Info("Created ", dir)
-	defer os.RemoveAll(dir)
+	//defer os.RemoveAll(dir)
 
 	_, err = util.SH(fmt.Sprintf("cp -rp %s/base/* %s", BaseDir, dir))
 	if err != nil {
@@ -35,10 +35,11 @@ func Build(BaseDir string) error {
 		return err
 	}
 
-	_, err = util.SH(fmt.Sprintf("docker build -t stx-base %s", dir))
+	out, err := util.SH(fmt.Sprintf("docker build -t stx-base %s", dir))
 	if err != nil {
-		log.Error("Failed to ", err)
+		log.Error("Failed to build", err)
 		return err
 	}
+	fmt.Println(out)
 	return nil
 }
