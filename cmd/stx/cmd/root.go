@@ -4,8 +4,12 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	log "github.com/sirupsen/logrus"
 )
 
+var (
+	debug	bool
+)
 
 
 var rootCmd = &cobra.Command{
@@ -23,7 +27,14 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Enable debug output")
+
 }
 
+func initConfig() {
+	log.SetOutput(os.Stdout)
+	if debug {
+		log.SetLevel(log.DebugLevel)
+	}
+}
 
