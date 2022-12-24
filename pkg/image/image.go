@@ -3,20 +3,17 @@ package image
 import (
 	"fmt"
 	"io/ioutil"
-	//"os"
+	"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/zulcss/edgeos/pkg/util"
 )
 
-type ImageContext struct {
-	image string
-}
-
-func Build(arg string) error {
-	log.Info("Buildng ", arg)
+func Build(BaseDir string) error {
+	log.Info("Image pre-flight checks")
 	// Check docker is installed
+	log.Info("Checking for docker executable...")
 	_, err := exec.LookPath("docker")
 	if err != nil {
 		log.Error("Docker is not installed.")
@@ -24,21 +21,24 @@ func Build(arg string) error {
 	}
 
 	// crete tempdir to build in
+	log.Info("Creating directory to build docker images")
 	dir, err := ioutil.TempDir("", "stx-build")
 	if err != nil {
 		return err
 	}
-	//defer os.RemoveAll(dir)
+	log.Info("Created ", dir)
+	defer os.RemoveAll(dir)
 
-	_, err = util.SH(fmt.Sprintf("cp -rp images %s", dir))
+	_, err = util.SH(fmt.Sprintf("cp -rp %s/base/* %s", BaseDir, dir))
+	if err != nil {
+		log.Error("Failed to copy: ", err)
+		return err
+	}
 
-	/*
-		out, err := util.SH("docker images -a")
-		if err != nil {
-			return err
-		}
-		fmt.Println(out)
-	*/
-
+	_, err = util.SH(fmt.Sprintf("docker build -t stx-image %s", dir))
+	if err != nil {
+		log.Error("Failed to ", err)
+		return err
+	}
 	return nil
 }
